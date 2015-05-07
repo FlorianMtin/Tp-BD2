@@ -1,0 +1,32 @@
+drop table message;
+drop table salle;
+drop table membre;
+
+
+-- Schema
+CREATE TABLE membre(id integer PRIMARY KEY, nom varchar2(40), email varchar2(100));
+CREATE TABLE salle(id integer PRIMARY KEY, moderateur integer REFERENCES membre(id), titre varchar2(100));
+CREATE TABLE message(id integer PRIMARY KEY, auteur integer REFERENCES membre(id), salle integer REFERENCES salle(id), parent integer,  date_envoi timestamp, titre varchar2(100), corps varchar2(1000));
+ALTER TABLE message ADD constraint fk_parent FOREIGN KEY (parent) REFERENCES message(id);
+ 
+-- Donnees
+INSERT INTO membre VALUES(1,'Toto','toto@blagues.com');
+INSERT INTO membre VALUES(2,'Titi','titi@canaries.com');
+INSERT INTO membre VALUES(3,'Rominet','sylvestre@eating-birds.com');
+INSERT INTO membre VALUES(4,'Bugs Bunny','bugs@whatsupdoc.com');
+ 
+INSERT INTO salle VALUES(1,1,'Bonne humeur');
+INSERT INTO salle VALUES(2,NULL,'Dessins animés');
+ 
+INSERT INTO message VALUES(1,1,1,NULL,sysdate,'Toto à l''école','C''est Toto à l''école. Sa prof lui demande: '||CHR(10)||' - Toto quelle est la 5 ème lettre de l''alphabet? '||CHR(10)||' - Euh ?');
+INSERT INTO message VALUES(2,3,2,NULL,sysdate,'Les plus beaux personnages','Ce sont les chats, évidement !');
+INSERT INTO message VALUES(3,2,2,2,sysdate,'Re: Les plus beaux personnages','Non, ce sont les canaris !');
+INSERT INTO message VALUES(4,3,2,3,sysdate,'Re: Les plus beaux personnages','Les chats !');
+INSERT INTO message VALUES(5,2,2,4,sysdate,'Re: Les plus beaux personnages','Grand mère, à l''aide !!!');
+INSERT INTO message VALUES(6,4,2,2,sysdate,'Re: Les plus beaux personnages','Moi, je dis que ce sont les lapins !');
+ 
+create sequence salle_seq start with 2 increment by 1;
+create sequence membre_seq start with 4 increment by 1;
+create sequence message_seq start with 7 increment by 1 ;
+ 
+commit;
